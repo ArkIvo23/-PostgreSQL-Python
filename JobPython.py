@@ -29,10 +29,10 @@ def create_table():
     conn.commit()
     conn.close()
 
-def add_client(client):
+def add_client(name, surname, email, phones=None):
     conn = sqlite3.connect("clients.db")
     c = conn.cursor()
-    c.execute("INSERT INTO clients (name, surname, email, phones) VALUES (?, ?, ?, ?)", (client.name, client.surname, client.email, client.phones))
+    c.execute("INSERT INTO clients (name, surname, email, phones) VALUES (?, ?, ?, ?)", (name, surname, email, phones))
     conn.commit()
     conn.close()
 
@@ -52,10 +52,10 @@ def get_clients_by_field(field, value):
     conn.close()
     return result
 
-def update_client(client):
+def update_client(id, name, surname, email, phones=None):
     conn = sqlite3.connect("clients.db")
     c = conn.cursor()
-    c.execute("UPDATE clients SET name = ?, surname = ?, email = ?, phones = ? WHERE id = ?", (client.name, client.surname, client.email, client.phones, client.id))
+    c.execute("UPDATE clients SET name = ?, surname = ?, email = ?, phones = ? WHERE id = ?", (name, surname, email, phones, id))
     conn.commit()
     conn.close()
 
@@ -72,6 +72,24 @@ def remove_phone(id, phone):
     c.execute("UPDATE clients SET phones = phones - ? WHERE id = ?", (phone, id))
     conn.commit()
     conn.close()
+def search_client(name=None, surname=None, email=None, phones=None):
+    conn = sqlite3.connect("clients.db")
+    c = conn.cursor()
+    query = "SELECT * FROM clients"
+    if name:
+        query += " WHERE name = ?"
+        assert isinstance(surname, object)
+    if surname:
+        query += " AND surname = ?"
+    if email:
+        query += " AND email = ?"
+    if phones:
+        query += " AND phones = ?"
+    c.execute(query, (name, surname, email, phones))
+    result = c.fetchall()
+    conn.close()
+    return result
+
 
 if __name__ == "__main__":
     create_table()
@@ -79,8 +97,8 @@ if __name__ == "__main__":
     client1 = Client("John", "Doe", "johndoe@example.com", ["1234567890", "9876543210"])
     client2 = Client("Jane", "Smith", "janesmith@example.com", ["0123456789", "1111111111"])
 
-    add_client(client1)
-    add_client(client2)
+    #add_client(client1)
+    #add_client(client2)
 
     print(get_client_by_id(1))
     print(get_clients_by_field("email", "janesmith@example.com"))
