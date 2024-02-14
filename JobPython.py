@@ -52,7 +52,7 @@ def get_clients_by_field(field, value):
     conn.close()
     return result
 
-def update_client(id, name, surname, email, phones=None):
+def update_client(id, name=None, surname=None, email=None, phones=None):
     conn = sqlite3.connect("clients.db")
     c = conn.cursor()
     c.execute("UPDATE clients SET name = ?, surname = ?, email = ?, phones = ? WHERE id = ?", (name, surname, email, phones, id))
@@ -72,6 +72,7 @@ def remove_phone(id, phone):
     c.execute("UPDATE clients SET phones = phones - ? WHERE id = ?", (phone, id))
     conn.commit()
     conn.close()
+    
 def search_client(name=None, surname=None, email=None, phones=None):
     conn = sqlite3.connect("clients.db")
     c = conn.cursor()
